@@ -1,81 +1,71 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.Interfaces;
 using WebApplication1.Models;
 
-
 namespace WebApplication1.Services
 {
     public class ClubServices : IClubServices
     {
-        
-        public async Task<Club> AddClubAsync(Club club)
+        public async Task<Club> CreateAsync(Club club)
         {
             using (var db = new ClubDbContext())
             {
-                var clubItems = db.Clubs.ToList();
-                await db.Clubs.AddAsync(club);
+                await db.Club.AddAsync(club);
                 await db.SaveChangesAsync();
-                clubItems = db.Clubs.ToList();
-            }
-            return club;
+                return club;
+            } 
         }
 
-       
-        public List<Club> GetClubs()
-        {
-            var salesDal = new ClubDbContext();
-            var clubItems = salesDal.Clubs.ToList();
-
-            return clubItems;
-        }
-
-        
-        public Club Get(int id)
-        {
-            var salesDal = new ClubDbContext();
-            var clubs = salesDal.Clubs.ToList();
-
-            var club1= clubs.FirstOrDefault(club => club.Id == id);
-            if (club1 == null)
-                return new Club();
-            return club1;
-        }
-
-        public string Delete(int id)
-        {
-            var salesDal = new ClubDbContext();
-            var clubs = salesDal.Clubs.ToList();
-
-            var c = clubs.FirstOrDefault(club => club.Id == id);
-            if (c == null)
-                return "This club is not found";
-            salesDal.Clubs.RemoveRange(c);
-            salesDal.SaveChanges();
-            return $"The club with id={ id} is deleted";
-        }
-
-        public Club UpdateClub(int id, Club club)
+        public async Task<List<Club>> GetAsync()
         {
             using (var db = new ClubDbContext())
             {
-                var clubs = db.Clubs.ToList();
-                var club1 = clubs.FirstOrDefault(c => c.Id == id);
-                if (club1 == null)
-                {
-                    return new Club();
-                }
-                else
-                {
-                    club1.Cooch = club.Cooch;
-                    club1.FoundationData = club.FoundationData;
-                    club1.Name = club.Name;
-                    db.Clubs.Update(club1);
-                    db.SaveChanges();
-                }
-                return club1;
+                var clubs = await db.Club.ToListAsync();
+                return clubs;
+            }
+        }
+
+        public async Task<Club> GetByIdAsync (int id)
+        {
+            using (var db = new ClubDbContext())
+            {
+                var currentclub = await db.Club.FirstOrDefaultAsync(club => club.Id == id);
+                return currentclub;
+            }
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            using (var db = new ClubDbContext())
+            {
+                var currentClub = await db.Club.FirstOrDefaultAsync(club => club.Id == id);
+                if (currentClub is null) return false;
+
+                db.Club.Remove(currentClub);
+                await db.SaveChangesAsync();
+                return true;
+            }
+        }
+
+        public async Task<Club> UpdateAsync(int id,[FromBody] Club clubDto)
+        {
+            using (var db = new ClubDbContext())
+            {
+                var currentClub = await db.Club.FirstOrDefaultAsync(club => club.Id == id);
+                if (currentClub is null) return null;
+
+                currentClub.Coach = clubDto.Coach;
+                currentClub.FoundationData = clubDto.FoundationData;
+                currentClub.Name = clubDto.Name;
+                db.Club.Update(currentClub);
+                await db.SaveChangesAsync();
+
+                return currentClub;
             }
         }
     }

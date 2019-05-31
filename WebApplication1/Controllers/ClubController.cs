@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.Interfaces;
 using WebApplication1.Models;
@@ -17,52 +19,97 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        [Route("AddClub")]
-        public async Task<ActionResult<Club>> AddClub(Club club)
+        public async Task<ActionResult<Club>> Create(Club club)
         {
+            try
+            {
+                await services.CreateAsync(club);
 
-            await services.AddClubAsync(club);
-
-            return club;
+                return club;
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
         }
 
         [HttpGet]
-        [Route("GetClubs")]
-        public ActionResult<List<Club>> GetClubs()
+        public async Task<ActionResult<List<Club>>> Get()
         {
-            var clubItems = services.GetClubs();
-
-            if (clubItems.Count == 0)
+            try
             {
-                return NotFound();
-            }
+                var clubItems = await services.GetAsync();
 
-            return clubItems;
+                if (!clubItems.Any())
+                {
+                    return NotFound();
+                }
+
+                return clubItems;
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
         }
 
         // GET: api/<controller>
-        [HttpGet]
-        [Route("Get")]
-        public ActionResult<Club> Get(int id)
+        [HttpGet("byId/{id}")]
+        public async Task<ActionResult<Club>> GetByIdAsync(int id)
         {
-            return services.Get(id);
+            try
+            {
+                var result =  await services.GetByIdAsync(id);
+
+                if (result is null)
+                {
+                    return NotFound();
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
         }
 
         // DELETE api/<controller>
         [HttpDelete]
-        [Route("Delete")]
-        public string  Delete(int id)
+        public async Task<ActionResult> DeleteAsync(int id)
         {
-            return services.Delete(id);
-            
+            try
+            {
+                if (await services.DeleteAsync(id))
+                    return Ok();
+                else
+                    return NotFound();
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
         }
 
         //UPDATE api/controller
-        [HttpPost]
-        [Route("Update")]
-        public  ActionResult<Club> UpdateClub(int id,Club club)
+        [HttpPut]
+        public async Task<ActionResult<Club>> UpdateAsync(int id, Club club)
         {
-            return  services.UpdateClub(id, club);
+            try
+            {
+                var result = await services.UpdateAsync(id,club);
+
+                if (result is null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
         }
     }
 }

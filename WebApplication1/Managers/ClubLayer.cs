@@ -12,7 +12,7 @@ namespace WebApplication1.Managers
             using (var db = new ClubDbContext())
             {
                 var clubs = db
-                    .Clubs
+                    .Club
                     .ToListAsync().Result;
                 return clubs;
             }
@@ -22,7 +22,7 @@ namespace WebApplication1.Managers
         {
             using (var db = new ClubDbContext())
             {
-                db.Clubs.Add(club);
+                db.Club.Add(club);
                 await db.SaveChangesAsync();
             }
             return club;
@@ -31,7 +31,7 @@ namespace WebApplication1.Managers
         public void UploadClubs(List<Club> clubs)
         {
             var db = new ClubDbContext(); // TODO using context dispose
-            db.Clubs.AddRange(clubs);
+            db.Club.AddRange(clubs);
             db.SaveChanges();
         }
     }
