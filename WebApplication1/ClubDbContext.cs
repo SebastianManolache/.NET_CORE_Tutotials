@@ -5,7 +5,7 @@ namespace WebApplication1
 {
     public class ClubDbContext : DbContext
     {
-        public DbSet<Club> Clubs { get; set; }
+        public DbSet<Club> Club { get; set; }
 
         public ClubDbContext()
         {
