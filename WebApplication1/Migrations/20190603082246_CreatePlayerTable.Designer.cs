@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1;
 
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ClubDbContext))]
-    partial class SalesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190603082246_CreatePlayerTable")]
+    partial class CreatePlayerTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,8 +56,6 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("LastName");
 
-                    b.Property<int>("PlayerProfileId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClubId");
@@ -63,45 +63,11 @@ namespace WebApplication1.Migrations
                     b.ToTable("Player");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.PlayerProfile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Height");
-
-                    b.Property<int>("PlayerId");
-
-                    b.Property<string>("Position");
-
-                    b.Property<string>("ShirtNumber");
-
-                    b.Property<string>("ShortName");
-
-                    b.Property<int>("Weight");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlayerId")
-                        .IsUnique();
-
-                    b.ToTable("PlayerProfile");
-                });
-
             modelBuilder.Entity("WebApplication1.Models.Player", b =>
                 {
                     b.HasOne("WebApplication1.Models.Club", "Club")
                         .WithMany("Players")
                         .HasForeignKey("ClubId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.PlayerProfile", b =>
-                {
-                    b.HasOne("WebApplication1.Models.Player", "Player")
-                        .WithOne("PlayerProfile")
-                        .HasForeignKey("WebApplication1.Models.PlayerProfile", "PlayerId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

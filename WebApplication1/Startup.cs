@@ -15,6 +15,8 @@ namespace WebApplication1
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
 
             services.AddSingleton<IClubServices, ClubServices>();
+            services.AddSingleton<IPlayerServices, PlayerServices>();
+            services.AddSingleton<IPlayerProfileServices, PlayerProfileServices>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

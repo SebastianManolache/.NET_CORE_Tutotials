@@ -6,49 +6,34 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Interfaces;
 using WebApplication1.Models;
 
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WebApplication1.Controllers
 {
     [Route("api/[controller]"), Produces("application/json")]
-    public class PlayerController : Controller
+    public class PlayerProfileController : Controller
     {
-        private readonly IPlayerServices services;
+        private readonly IPlayerProfileServices services;
 
-        public PlayerController(IPlayerServices services)
+        public PlayerProfileController(IPlayerProfileServices services)
         {
             this.services = services;
         }
 
-
-
-        [HttpPost]
-        public async Task<ActionResult<Player>> Create([FromBody] Player player, int clubId)
-        {
-            try
-            {
-                await services.CreateAsync(player, clubId);
-                return Json(player);
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"{e.Message} - {e.InnerException.Message}");
-            }
-        }
-
-
+        // GET: api/<controller>
         [HttpGet]
-        public async Task<ActionResult<List<Player>>> Get()
+        public async Task<ActionResult<List<PlayerProfile>>> GetAsync()
         {
             try
             {
-                var players = await services.GetAsync();
+                var result = await services.GetAsync();
 
-                if (!players.Any())
+                if (result is null)
                 {
                     return NotFound();
                 }
 
-                return players;
+                return result;
             }
             catch (Exception e)
             {
@@ -58,7 +43,7 @@ namespace WebApplication1.Controllers
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Player>> GetByIdAsync(int id)
+        public async Task<ActionResult<PlayerProfile>> GetByIdAsync(int id)
         {
             try
             {
@@ -78,22 +63,14 @@ namespace WebApplication1.Controllers
         }
 
         // POST api/<controller>
-
-
-        // PUT api/<controller>/5
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Player>> UpdateAsync(int id, [FromBody]Player player)
+        [HttpPost]
+        public async Task<ActionResult<PlayerProfile>> CreateAsync([FromBody]PlayerProfile playerProfile)
         {
             try
             {
-                var currentPlayer = await services.UpdateAsync(id, player);
+                await services.CreateAsync( playerProfile);
 
-                if (currentPlayer is null)
-                {
-                    return NotFound();
-                }
-
-                return currentPlayer;
+                return playerProfile;
             }
             catch (Exception e)
             {
@@ -101,6 +78,26 @@ namespace WebApplication1.Controllers
             }
         }
 
+        // PUT api/<controller>/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult<PlayerProfile>> UpdateAsync(int id, [FromBody]PlayerProfile playerProfile)
+        {
+            try
+            {
+                var result = await services.UpdateAsync(id, playerProfile);
+
+                if (result is null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
+        }
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
@@ -112,26 +109,6 @@ namespace WebApplication1.Controllers
                     return Ok();
                 else
                     return NotFound();
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"{e.Message} - {e.InnerException.Message}");
-            }
-        }
-        [HttpGet("getclubplayers/{id}")]
-        public async Task<ActionResult<List<Player>>> GetClubPlayersAsync(int id)
-        {
-            try
-            {
-                
-                var players = await services.GetPlayersByClubAsync(id);
-
-                if (players is null || !players.Any())
-                {
-                    return NotFound();
-                }
-
-                return players;
             }
             catch (Exception e)
             {
