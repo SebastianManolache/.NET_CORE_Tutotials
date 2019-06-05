@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.Models;
 
@@ -14,6 +12,5 @@ namespace WebApplication1.Interfaces
         Task<PlayerProfile> CreateAsync(PlayerProfile playerProfile);
         Task<PlayerProfile> UpdateAsync(int id, PlayerProfile playerProfile);
         Task<bool> DeleteAsync(int id);
-
     }
 }

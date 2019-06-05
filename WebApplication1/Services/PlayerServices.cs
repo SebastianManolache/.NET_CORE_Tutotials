@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,12 +14,11 @@ namespace WebApplication1.Services
             using (var db = new ClubDbContext())
             {
                 var currentClub = await db.Club.FirstOrDefaultAsync(club => club.Id == ClubId);
-                player.Club = currentClub;
-                //currentClub.Players.Add(player);
 
-                //player.Club.Players.Add(player);
+                player.Club = currentClub;
                 await db.Player.AddAsync(player);
                 await db.SaveChangesAsync();
+
                 return player;
             }
         }
@@ -34,6 +32,7 @@ namespace WebApplication1.Services
 
                 db.Player.Remove(currentPlayer);
                 await db.SaveChangesAsync();
+
                 return true;
             }
         }
@@ -43,8 +42,9 @@ namespace WebApplication1.Services
             using (var db = new ClubDbContext())
             {
                 var players = await db.Player
-                    .Include(p=>p.Club)
+                    .Include(p => p.PlayerProfile)
                     .ToListAsync();
+
                 return players;
             }
         }
@@ -62,26 +62,11 @@ namespace WebApplication1.Services
         {
             using (var db = new ClubDbContext())
             {
-                //var currentClub = await db.Club.FirstOrDefaultAsync(club => club.Id == clubId);
-
-                //return currentClub.Players.ToList();
                 var players = await db.Player
-                    //.Include(p => p.Club)
                     .Where(player => player.ClubId == clubId)
                     .ToListAsync();
-                //var clubs = await db.Club.ToListAsync();
-                //var currentPlayer = clubs.Join(
-                //    players,
-                //    club => club.Id,
-                //    player => player.Club.Id,
-                //    (club, player) => new
-                //    {
-                //        ClubName = club.Name,
-                //        PlayerName = player.DisplayName
-                //    });
 
-               return players;
-
+                return players;
             }
         }
 
@@ -99,6 +84,7 @@ namespace WebApplication1.Services
                 currentplayer.ClubId = playerDto.ClubId;
                 currentplayer.Gender = playerDto.Gender;
                 await db.SaveChangesAsync();
+
                 return currentplayer;
             }
         }

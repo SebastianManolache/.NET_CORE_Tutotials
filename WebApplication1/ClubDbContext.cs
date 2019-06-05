@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models;
-using System;
+
 namespace WebApplication1
 {
     public class ClubDbContext : DbContext
@@ -33,8 +33,8 @@ namespace WebApplication1
 
             modelBuilder.Entity<Player>()
                 .HasOne(player => player.PlayerProfile)
-                .WithOne(profile =>profile.Player)
-                .HasForeignKey<PlayerProfile>(profile =>profile.PlayerId);
+                .WithOne()
+                .HasForeignKey<PlayerProfile>(profile => profile.PlayerId);
         }
 
     }

@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Interfaces;
 using WebApplication1.Models;
 
@@ -20,7 +19,6 @@ namespace WebApplication1.Controllers
             this.services = services;
         }
 
-        // GET: api/<controller>
         [HttpGet]
         public async Task<ActionResult<List<PlayerProfile>>> GetAsync()
         {
@@ -41,7 +39,7 @@ namespace WebApplication1.Controllers
             }
         }
 
-        // GET api/<controller>/5
+        // GET api/<controller>/id
         [HttpGet("{id}")]
         public async Task<ActionResult<PlayerProfile>> GetByIdAsync(int id)
         {
@@ -68,7 +66,7 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                await services.CreateAsync( playerProfile);
+                await services.CreateAsync(playerProfile);
 
                 return playerProfile;
             }
@@ -78,7 +76,7 @@ namespace WebApplication1.Controllers
             }
         }
 
-        // PUT api/<controller>/5
+        // PUT api/<controller>/id
         [HttpPut("{id}")]
         public async Task<ActionResult<PlayerProfile>> UpdateAsync(int id, [FromBody]PlayerProfile playerProfile)
         {
@@ -99,7 +97,7 @@ namespace WebApplication1.Controllers
             }
         }
 
-        // DELETE api/<controller>/5
+        // DELETE api/<controller>/id
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id)
         {

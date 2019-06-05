@@ -13,7 +13,5 @@ namespace WebApplication1.Models
         public int Height { get; set; }
         public int Weight { get; set; }
         public int PlayerId { get; set; }
-        public Player Player { get; set; }
-
     }
 }

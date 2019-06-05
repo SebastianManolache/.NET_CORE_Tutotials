@@ -14,7 +14,6 @@ namespace WebApplication1.Models
         public int Gender { get; set; }
         public int ClubId { get; set; }
         public Club Club { get; set; }
-        public int PlayerProfileId { get; set; }
         public PlayerProfile PlayerProfile { get; set; }
     }
 }

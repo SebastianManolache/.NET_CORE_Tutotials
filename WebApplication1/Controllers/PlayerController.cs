@@ -27,7 +27,7 @@ namespace WebApplication1.Controllers
             try
             {
                 await services.CreateAsync(player, clubId);
-                return Json(player);
+                return player;
             }
             catch (Exception e)
             {
