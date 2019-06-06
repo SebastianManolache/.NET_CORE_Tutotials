@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IO;
 using WebApplication1.Interfaces;
 using WebApplication1.Services;
+using WebApplication1.Utils;
 
 namespace WebApplication1
 {
@@ -15,6 +20,10 @@ namespace WebApplication1
         {
             services.AddAutoMapper();
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
+            var context = new CustomAssemblyLoadContext();
+            context.LoadUnmanagedLibrary(Path.Combine(AppContext.BaseDirectory, $"libwkhtmltox.dll"));
+
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
             services.AddSingleton<IClubServices, ClubServices>();
             services.AddSingleton<IPlayerServices, PlayerServices>();
