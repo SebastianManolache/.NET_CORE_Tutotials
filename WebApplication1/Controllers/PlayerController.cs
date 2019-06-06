@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Interfaces;
 using WebApplication1.Models;
-
+using WebApplication1.Models.Dtos.Player;
 
 namespace WebApplication1.Controllers
 {
@@ -13,21 +14,21 @@ namespace WebApplication1.Controllers
     public class PlayerController : Controller
     {
         private readonly IPlayerServices services;
+        private readonly IMapper mapper;
 
-        public PlayerController(IPlayerServices services)
+        public PlayerController(IPlayerServices services, IMapper mapper)
         {
             this.services = services;
+            this.mapper = mapper;
         }
 
-
-
         [HttpPost]
-        public async Task<ActionResult<Player>> Create([FromBody] Player player, int clubId)
+        public async Task<ActionResult<PlayerPost>> Create([FromBody] Player player, int clubId)
         {
             try
             {
                 await services.CreateAsync(player, clubId);
-                return player;
+                return mapper.Map<PlayerPost>(player);
             }
             catch (Exception e)
             {
@@ -35,9 +36,8 @@ namespace WebApplication1.Controllers
             }
         }
 
-
         [HttpGet]
-        public async Task<ActionResult<List<Player>>> Get()
+        public async Task<ActionResult<List<PlayerGet>>> Get()
         {
             try
             {
@@ -48,7 +48,7 @@ namespace WebApplication1.Controllers
                     return NotFound();
                 }
 
-                return players;
+                return mapper.Map<List<PlayerGet>>(players);
             }
             catch (Exception e)
             {
@@ -56,9 +56,9 @@ namespace WebApplication1.Controllers
             }
         }
 
-        // GET api/<controller>/5
+        // GET api/<controller>/id
         [HttpGet("{id}")]
-        public async Task<ActionResult<Player>> GetByIdAsync(int id)
+        public async Task<ActionResult<PlayerGet>> GetByIdAsync(int id)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace WebApplication1.Controllers
                     return NotFound();
                 }
 
-                return result;
+                return mapper.Map<PlayerGet>(result);
             }
             catch (Exception e)
             {
@@ -77,12 +77,9 @@ namespace WebApplication1.Controllers
             }
         }
 
-        // POST api/<controller>
-
-
-        // PUT api/<controller>/5
+        // PUT api/<controller>/id
         [HttpPut("{id}")]
-        public async Task<ActionResult<Player>> UpdateAsync(int id, [FromBody]Player player)
+        public async Task<ActionResult<PlayerPut>> UpdateAsync(int id, [FromBody]Player player)
         {
             try
             {
@@ -93,7 +90,7 @@ namespace WebApplication1.Controllers
                     return NotFound();
                 }
 
-                return currentPlayer;
+                return mapper.Map<PlayerPut>(currentPlayer);
             }
             catch (Exception e)
             {
@@ -102,7 +99,7 @@ namespace WebApplication1.Controllers
         }
 
 
-        // DELETE api/<controller>/5
+        // DELETE api/<controller>/id
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
@@ -118,12 +115,13 @@ namespace WebApplication1.Controllers
                 return BadRequest($"{e.Message} - {e.InnerException.Message}");
             }
         }
+
         [HttpGet("getclubplayers/{id}")]
-        public async Task<ActionResult<List<Player>>> GetClubPlayersAsync(int id)
+        public async Task<ActionResult<List<PlayerGet>>> GetClubPlayersAsync(int id)
         {
             try
             {
-                
+
                 var players = await services.GetPlayersByClubAsync(id);
 
                 if (players is null || !players.Any())
@@ -131,7 +129,7 @@ namespace WebApplication1.Controllers
                     return NotFound();
                 }
 
-                return players;
+                return mapper.Map<List<PlayerGet>>(players);
             }
             catch (Exception e)
             {

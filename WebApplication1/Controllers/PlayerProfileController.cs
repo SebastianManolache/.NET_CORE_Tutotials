@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApplication1.Interfaces;
 using WebApplication1.Models;
+using WebApplication1.Models.Dtos.PlayerProfile;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,14 +15,16 @@ namespace WebApplication1.Controllers
     public class PlayerProfileController : Controller
     {
         private readonly IPlayerProfileServices services;
+        private readonly IMapper mapper;
 
-        public PlayerProfileController(IPlayerProfileServices services)
+        public PlayerProfileController(IPlayerProfileServices services, IMapper mapper)
         {
             this.services = services;
+            this.mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<PlayerProfile>>> GetAsync()
+        public async Task<ActionResult<List<PlayerProfileGet>>> GetAsync()
         {
             try
             {
@@ -31,7 +35,7 @@ namespace WebApplication1.Controllers
                     return NotFound();
                 }
 
-                return result;
+                 return mapper.Map<List<PlayerProfileGet>>(result);
             }
             catch (Exception e)
             {
@@ -41,7 +45,7 @@ namespace WebApplication1.Controllers
 
         // GET api/<controller>/id
         [HttpGet("{id}")]
-        public async Task<ActionResult<PlayerProfile>> GetByIdAsync(int id)
+        public async Task<ActionResult<PlayerProfileGet>> GetByIdAsync(int id)
         {
             try
             {
@@ -52,7 +56,7 @@ namespace WebApplication1.Controllers
                     return NotFound();
                 }
 
-                return result;
+                return mapper.Map<PlayerProfileGet>(result);
             }
             catch (Exception e)
             {
@@ -62,13 +66,13 @@ namespace WebApplication1.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<ActionResult<PlayerProfile>> CreateAsync([FromBody]PlayerProfile playerProfile)
+        public async Task<ActionResult<PlayerProfilePost>> CreateAsync([FromBody]PlayerProfile playerProfile)
         {
             try
             {
                 await services.CreateAsync(playerProfile);
 
-                return playerProfile;
+                return mapper.Map<PlayerProfilePost>(playerProfile);
             }
             catch (Exception e)
             {
@@ -78,7 +82,7 @@ namespace WebApplication1.Controllers
 
         // PUT api/<controller>/id
         [HttpPut("{id}")]
-        public async Task<ActionResult<PlayerProfile>> UpdateAsync(int id, [FromBody]PlayerProfile playerProfile)
+        public async Task<ActionResult<PlayerProfilePut>> UpdateAsync(int id, [FromBody]PlayerProfile playerProfile)
         {
             try
             {
@@ -89,7 +93,7 @@ namespace WebApplication1.Controllers
                     return NotFound();
                 }
 
-                return Ok(result);
+                return mapper.Map<PlayerProfilePut>( result);
             }
             catch (Exception e)
             {

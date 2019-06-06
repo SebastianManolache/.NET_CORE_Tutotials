@@ -43,6 +43,7 @@ namespace WebApplication1.Services
             {
                 var players = await db.Player
                     .Include(p => p.PlayerProfile)
+                    .Include(p =>p.Club)
                     .ToListAsync();
 
                 return players;
@@ -53,7 +54,9 @@ namespace WebApplication1.Services
         {
             using (var db = new ClubDbContext())
             {
-                var currentplayer = await db.Player.FirstOrDefaultAsync(player => player.Id == id);
+                var currentplayer = await db.Player
+                    .Include(p =>p.Club)
+                    .FirstOrDefaultAsync(player => player.Id == id);
                 return currentplayer;
             }
         }

@@ -21,9 +21,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Dtos\PlayerProfile\" />
-    <Folder Include="Models\Dtos\Player\" />
-  </ItemGroup>
-
 </Project>

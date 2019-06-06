@@ -31,7 +31,6 @@ namespace WebApplication1.Controllers
 
                 var clubPost = mapper.Map<ClubPost>(club);
                 return clubPost;
-                //return club;
             }
             catch (Exception e)
             {
@@ -50,9 +49,8 @@ namespace WebApplication1.Controllers
                 {
                     return NotFound();
                 }
-                //List<ClubGet> clubs = mapper.Map<ClubGet>(clubItems);
-                var clubs = new List<ClubGet>();
-                clubItems.ForEach(club => clubs.Add(mapper.Map<ClubGet>(club)));
+                var clubs = mapper.Map<List<ClubGet>>(clubItems);
+
                 return clubs;
             }
             catch (Exception e)

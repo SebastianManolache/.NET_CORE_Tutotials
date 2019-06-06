@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApplication1.Interfaces;
@@ -14,13 +13,12 @@ namespace WebApplication1.Services
             using (var db = new ClubDbContext())
             {
                 var currentPlayer = await db.Player.FirstOrDefaultAsync(player => player.Id == playerProfile.PlayerId);
+        
                 currentPlayer.PlayerProfile = playerProfile;
-
-                //playerProfile.Player = currentPlayer;
-                //currentPlayer.PlayerProfile = playerProfile;
 
                 await db.PlayerProfile.AddAsync(playerProfile);
                 await db.SaveChangesAsync();
+
                 return playerProfile;
             }
         }
@@ -39,7 +37,7 @@ namespace WebApplication1.Services
             }
         }
 
-        public async Task<ActionResult<List<PlayerProfile>>> GetAsync()
+        public async Task<List<PlayerProfile>> GetAsync()
         {
             using (var db = new ClubDbContext())
             {
