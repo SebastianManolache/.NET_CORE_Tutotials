@@ -2,50 +2,139 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using WebApplication1.Interfaces;
+using WebApplication1.Models;
+using WebApplication1.Models.Dtos.Player;
 
 namespace WebApplication1.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), Produces("application/json")]
     public class PlayerController : Controller
     {
-        // GET: api/<controller>
-        [HttpGet]
-        public IEnumerable<string> GetPlayer()
+        private readonly IPlayerServices services;
+        private readonly IMapper mapper;
+
+        public PlayerController(IPlayerServices services, IMapper mapper)
         {
-            return new string[] { "value1", "value2" };
+            this.services = services;
+            this.mapper = mapper;
         }
 
-        public IEnumerable<string> GetPlayers()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<controller>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<ActionResult<PlayerPost>> Create([FromBody] Player player, int clubId)
         {
+            try
+            {
+                await services.CreateAsync(player, clubId);
+                return mapper.Map<PlayerPost>(player);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
         }
 
-        // PUT api/<controller>/5
+        [HttpGet]
+        public async Task<ActionResult<List<PlayerGet>>> Get()
+        {
+            try
+            {
+                var players = await services.GetAsync();
+
+                if (!players.Any())
+                {
+                    return NotFound();
+                }
+
+                return mapper.Map<List<PlayerGet>>(players);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
+        }
+
+        // GET api/<controller>/id
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PlayerGet>> GetByIdAsync(int id)
+        {
+            try
+            {
+                var result = await services.GetByIdAsync(id);
+
+                if (result is null)
+                {
+                    return NotFound();
+                }
+
+                return mapper.Map<PlayerGet>(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
+        }
+
+        // PUT api/<controller>/id
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public async Task<ActionResult<PlayerPut>> UpdateAsync(int id, [FromBody]Player player)
         {
+            try
+            {
+                var currentPlayer = await services.UpdateAsync(id, player);
+
+                if (currentPlayer is null)
+                {
+                    return NotFound();
+                }
+
+                return mapper.Map<PlayerPut>(currentPlayer);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
         }
 
-        // DELETE api/<controller>/5
+
+        // DELETE api/<controller>/id
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeleteAsync(int id)
         {
+            try
+            {
+                if (await services.DeleteAsync(id))
+                    return Ok();
+                else
+                    return NotFound();
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
+        }
+
+        [HttpGet("getclubplayers/{id}")]
+        public async Task<ActionResult<List<PlayerGet>>> GetClubPlayersAsync(int id)
+        {
+            try
+            {
+
+                var players = await services.GetPlayersByClubAsync(id);
+
+                if (players is null || !players.Any())
+                {
+                    return NotFound();
+                }
+
+                return mapper.Map<List<PlayerGet>>(players);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+            }
         }
     }
 }

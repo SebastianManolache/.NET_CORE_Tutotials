@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.Interfaces;
 using WebApplication1.Models;
@@ -25,7 +23,9 @@ namespace WebApplication1.Services
         {
             using (var db = new ClubDbContext())
             {
-                var clubs = await db.Club.ToListAsync();
+                var clubs = await db.Club
+                    .Include(club => club.Players)
+                    .ToListAsync();
                 return clubs;
             }
         }
@@ -34,7 +34,9 @@ namespace WebApplication1.Services
         {
             using (var db = new ClubDbContext())
             {
-                var currentclub = await db.Club.FirstOrDefaultAsync(club => club.Id == id);
+                var currentclub = await db.Club
+                    .Include(club => club.Players)
+                    .FirstOrDefaultAsync(club => club.Id == id);
                 return currentclub;
             }
         }

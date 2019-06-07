@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.Interfaces;
 using WebApplication1.Models;
+using WebApplication1.Models.Dtos.Club;
 
 namespace WebApplication1.Controllers
 {
@@ -12,20 +14,23 @@ namespace WebApplication1.Controllers
     public class ClubController : Controller
     {
         private readonly IClubServices services;
+        private readonly IMapper mapper;
 
-        public ClubController(IClubServices services)
+        public ClubController(IClubServices services, IMapper mapper)
         {
             this.services = services;
+            this.mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Club>> Create(Club club)
+        public async Task<ActionResult<ClubPost>> Create(Club club)
         {
             try
             {
                 await services.CreateAsync(club);
 
-                return club;
+                var clubPost = mapper.Map<ClubPost>(club);
+                return clubPost;
             }
             catch (Exception e)
             {
@@ -34,7 +39,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Club>>> Get()
+        public async Task<ActionResult<List<ClubGet>>> Get()
         {
             try
             {
@@ -44,8 +49,9 @@ namespace WebApplication1.Controllers
                 {
                     return NotFound();
                 }
+                var clubs = mapper.Map<List<ClubGet>>(clubItems);
 
-                return clubItems;
+                return clubs;
             }
             catch (Exception e)
             {
@@ -59,7 +65,7 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                var result =  await services.GetByIdAsync(id);
+                var result = await services.GetByIdAsync(id);
 
                 if (result is null)
                 {
@@ -92,19 +98,20 @@ namespace WebApplication1.Controllers
         }
 
         //UPDATE api/controller
-        [HttpPut]
-        public async Task<ActionResult<Club>> UpdateAsync(int id, Club club)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ClubPut>> UpdateAsync(int id, Club club)
         {
             try
             {
-                var result = await services.UpdateAsync(id,club);
+                var result = await services.UpdateAsync(id, club);
 
                 if (result is null)
                 {
                     return NotFound();
                 }
 
-                return Ok(result);
+                ClubPut clubPut = mapper.Map<ClubPut>(result);
+                return clubPut;
             }
             catch (Exception e)
             {

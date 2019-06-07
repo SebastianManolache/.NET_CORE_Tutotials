@@ -35,6 +35,73 @@ namespace WebApplication1.Migrations
 
                     b.ToTable("Club");
                 });
+
+            modelBuilder.Entity("WebApplication1.Models.Player", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ClubId");
+
+                    b.Property<DateTime>("DateofBirth");
+
+                    b.Property<string>("DisplayName");
+
+                    b.Property<string>("FirstName");
+
+                    b.Property<int>("Gender");
+
+                    b.Property<string>("LastName");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClubId");
+
+                    b.ToTable("Player");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.PlayerProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Height");
+
+                    b.Property<int>("PlayerId");
+
+                    b.Property<string>("Position");
+
+                    b.Property<string>("ShirtNumber");
+
+                    b.Property<string>("ShortName");
+
+                    b.Property<int>("Weight");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId")
+                        .IsUnique();
+
+                    b.ToTable("PlayerProfile");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Player", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Club", "Club")
+                        .WithMany("Players")
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.PlayerProfile", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Player")
+                        .WithOne("PlayerProfile")
+                        .HasForeignKey("WebApplication1.Models.PlayerProfile", "PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
 #pragma warning restore 612, 618
         }
     }

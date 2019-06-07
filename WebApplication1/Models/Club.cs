@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.Models
@@ -10,20 +11,6 @@ namespace WebApplication1.Models
         public string Name { get; set; }
         public string Coach { get; set; }
         public DateTime FoundationData { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj as Club).Id == Id)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public List<Player> Players { get; set; }
     }
 }
