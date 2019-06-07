@@ -12,5 +12,6 @@ namespace WebApplication1.Models
         public string Coach { get; set; }
         public DateTime FoundationData { get; set; }
         public List<Player> Players { get; set; }
+        
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebApplication1.Interfaces;
 using WebApplication1.Models;
 using WebApplication1.Models.Dtos.Club;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 
 namespace WebApplication1.Controllers
 {
@@ -22,24 +23,26 @@ namespace WebApplication1.Controllers
             this.mapper = mapper;
         }
 
+
         [HttpPost]
-        public async Task<ActionResult<ClubPost>> Create(Club club)
+        public async Task<IActionResult> Create(Club club)
         {
             try
             {
                 await services.CreateAsync(club);
 
                 var clubPost = mapper.Map<ClubPost>(club);
-                return clubPost;
+
+                return Ok(clubPost);
             }
             catch (Exception e)
             {
-                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+                return BadRequest(e);
             }
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ClubGet>>> Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
@@ -51,17 +54,17 @@ namespace WebApplication1.Controllers
                 }
                 var clubs = mapper.Map<List<ClubGet>>(clubItems);
 
-                return clubs;
+                return Ok(clubs);
             }
             catch (Exception e)
             {
-                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+                return BadRequest(e);
             }
         }
 
         // GET: api/<controller>
         [HttpGet("byId/{id}")]
-        public async Task<ActionResult<Club>> GetByIdAsync(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
             try
             {
@@ -72,7 +75,7 @@ namespace WebApplication1.Controllers
                     return NotFound();
                 }
 
-                return result;
+                return Ok(result);
             }
             catch (Exception e)
             {
@@ -82,7 +85,7 @@ namespace WebApplication1.Controllers
 
         // DELETE api/<controller>
         [HttpDelete]
-        public async Task<ActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             try
             {
@@ -93,13 +96,13 @@ namespace WebApplication1.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest($"{e.Message} - {e.InnerException.Message}");
+                return BadRequest(e);
             }
         }
 
         //UPDATE api/controller
         [HttpPut("{id}")]
-        public async Task<ActionResult<ClubPut>> UpdateAsync(int id, Club club)
+        public async Task<IActionResult> UpdateAsync(int id, Club club)
         {
             try
             {
@@ -111,7 +114,8 @@ namespace WebApplication1.Controllers
                 }
 
                 ClubPut clubPut = mapper.Map<ClubPut>(result);
-                return clubPut;
+
+                return Ok(clubPut);
             }
             catch (Exception e)
             {
